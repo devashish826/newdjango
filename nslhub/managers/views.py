@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from django.http.response import JsonResponse
-from .models import StakeHolder,SkillData,Skills
+from .models import StakeHolder,SkillData,Skills,User
 
 # Create your views here.
 
@@ -86,8 +86,6 @@ class LeaderUndersManager(APIView):
         print('-----------------------------------------------',primary_id_empl)
         leaderUnderManager = StakeHolder.objects.filter(manager = primary_id_empl)
         print('-------------vvvvv--------------------------',leaderUnderManager)
-        first_name = StakeHolder.objects.filter(user_id=6)
-        print('============================================',first_name)
         leaders=[]
         for leader in leaderUnderManager:
             leader ={'Emp Id':leader.employee_id}
@@ -109,6 +107,24 @@ class LeaderSkillData(APIView):
             skill ={'Skill':b.name,'proficiency_level':i.proficiency}
             Skill.append(skill)
         return JsonResponse(Skill , safe=False)
+
+class LeaderUndersManagerFistnameLastname(APIView):
+
+    def get(self,request):
+        datalist = {}
+        datalist = request.data
+        employee_id= datalist['employee_id']
+        primary_id_empl= StakeHolder.objects.get(employee_id=employee_id).id
+        leaderUnderManager = StakeHolder.objects.filter(manager = primary_id_empl)
+        Skill=[]
+        for i in leaderUnderManager:
+            a=i.user_id
+            b = User.objects.get(id = a)
+            skill ={'Emp id':i.employee_id,'first name':b.first_name,'last name':b.last_name}
+            Skill.append(skill)
+        return JsonResponse(Skill , safe=False)
+       
+       
 
      
 
