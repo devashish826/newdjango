@@ -25,7 +25,8 @@ class PermissionGroups(models.Model):
 class Skills(models.Model):
     """Skills model."""
     name = models.CharField(max_length=240, unique=True)
-
+    def __str__(self):
+        return self.name
 
 
 
@@ -94,7 +95,7 @@ class ModuleType(models.Model):
 class ModuleStack(models.Model):
     name = models.CharField(max_length=300, null=True)
     module_type = models.ForeignKey(ModuleType,  on_delete=models.CASCADE, related_name="ModuleStack-ModuleType+", null=True)
-    # parent_module = models.ForeignKey('self',  on_delete=models.CASCADE, related_name="ModuleStack-Module+", null=True)
+    parent_module = models.ForeignKey('self',  on_delete=models.CASCADE, related_name="ModuleStack-Module+", null=True)
     leaders = models.ManyToManyField(StakeHolder, through='ModuleLeaders', related_name="Module-Leaders+")
     active = models.BooleanField(default=True)
     def __str__(self):
