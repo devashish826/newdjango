@@ -3,6 +3,12 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from enum import IntEnum
 
+class ModuleTypeEnum(IntEnum):
+    STACK = 0
+    GROUP_MODULE = 1
+    MODULE = 2
+    WORK_MODULE = 3
+
 
 class Entity(models.Model):
     """Permission Groups"""
@@ -88,7 +94,7 @@ class SkillData(models.Model):
 
 class ModuleType(models.Model):
     name = models.CharField(max_length=300, null=True)
-    # enum = models.IntegerField(choices=[(val.value, val.name) for val in ModuleTypeEnum], null=True)
+    enum = models.IntegerField(choices=[(val.value, val.name) for val in ModuleTypeEnum], null=True)
     def __str__(self):
         return self.name
 
@@ -98,11 +104,9 @@ class ModuleStack(models.Model):
     parent_module = models.ForeignKey('self',  on_delete=models.CASCADE, related_name="ModuleStack-Module+", null=True)
     leaders = models.ManyToManyField(StakeHolder, through='ModuleLeaders', related_name="Module-Leaders+")
     active = models.BooleanField(default=True)
-    def __str__(self):
-        return self.name
 
 class ModuleLeaders(models.Model):
-    module = models.ForeignKey(ModuleStack,  on_delete=models.CASCADE, related_name="Leaders-Module+", null=True)
+    module = models.ForeignKey(ModuleStack,on_delete=models.CASCADE, related_name="Leaders-Module+", null=True)
     stakeholder = models.ForeignKey(StakeHolder,  on_delete=models.CASCADE, related_name="Leader-StakeHolder+", null=True)
     spoc = models.BooleanField(default=False)
     leader = models.BooleanField(default=False)

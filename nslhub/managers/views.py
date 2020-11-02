@@ -74,7 +74,6 @@ class Stakeholderlist(APIView):
         leader = []
         datalist = request.data
         name= datalist['name']
-        # moduleStack
         modulestackObject = ModuleStack.objects.get(name = name)
         ModuleLeadersObject = ModuleLeaders.objects.filter(module_id = modulestackObject)
         # for i in ModuleLeadersObject:
@@ -91,7 +90,25 @@ class Stakeholderlist(APIView):
             Skill.append(skill)
         print('--------------------------------------------------',leader)
         return JsonResponse(Skill , safe=False)
-       
+
+class ModuleTypeEnum(APIView):
+
+    def get(self,request):
+        stacknameid =[]
+        datalist = {}
+        datalist = request.data
+        Enum= datalist['Enum']
+        ModuleTypeName = ModuleType.objects.filter(enum = Enum)
+        # stacknameid = ModuleType.objects.filter(id)
+        ModuleStackname = ModuleStack.objects.filter(module_type_id__in = ModuleTypeName)
+        # print('--------------------------------',ModuleStackname.values())
+        Skill =[]
+        for  i in ModuleStackname:
+            stacknameid.append(i.id) 
+            skill ={'name':i.name}
+            Skill.append(skill)
+        return JsonResponse(Skill , safe=False)
+    
        
 
         # return JsonResponse({'dev':'ok'})
