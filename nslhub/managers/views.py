@@ -1,80 +1,9 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from django.http.response import JsonResponse
-from .models import StakeHolder,SkillData,Skills,User
+from .models import StakeHolder,SkillData,Skills,User,ModuleStack,ModuleLeaders,ModuleType
 
 # Create your views here.
-
-# class Manager(APIView):
-
-#     def get(self,request):
-#         datalist = {}
-#         datalist = request.data
-#         employee_id= datalist['employee_id']
-#         name = StakeHolder.objects.filter(employee_id=employee_id).values()
-#         print('---------------------------------',name)
-#         # linked_content = []
-#         # namee =[]
-#         # for content in name: 
-#         #     namee.append(content)
-#         #     linked_content.append(content)
-#         #     print('-----------------------------',linked_content)
-#         res  = {}
-#         for line in name:
-            
-#             res.update(line)
-#             res['id']
-#         name_id = res['id']
-#         leaderUnderManager = StakeHolder.objects.filter(manager = name_id)
-#         print('------------------res-------------',res)
-#         print('-------------------name--------------',name)
-#         # -------------------------------------------------------------------
-#         post1=[]
-#         for i in leaderUnderManager:
-#             i ={'Emp Id':i.employee_id}
-#             post1.append(i)
-#         return JsonResponse(post1 , safe=False)
-
-#         # return JsonResponse({'dev':'ok'})
-
-#         # courses =  StakeHolder.objects.filter(employee_id='FE02').values()
-#         # linked_content = []
-#         # for content in courses:
-#         #     linked_content.append(content)
-#         #     # return linked_content
-#         # print('------------------------',linked_content)
-
-
-#         # leaderUnderManager = StakeHolder.objects.filter(StakeHo)
-#         # print('-------------------------------------',leaderUnderManager)
-#         # all_entries = StakeHolder.objects.all()
-#         # manager_nhmind =StakeHolder.objects.filter(pk__in =[5])
-#         # leaderUnderManager = StakeHolder.objects.filter(manager = 5)
-#         # head_manager_nhmind = StakeHolder.objects.filter(pk__in =[8])
-#         # leaderUnderHeadManager = StakeHolder.objects.filter(manager = 10)
-
-#         # linked_content = []
-#         # name =[]
-#         # linked_contentt = []
-#         # namee =[]
-#         # linked_contents = []
-#         # names =[]
-
-#         # for content in leaderUnderManager: 
-#         #     name.append(content.id)
-#         #     linked_content.append(content)
-#         # print('--Leader under nh mind-',linked_content)
-
-#         # for content in manager_nhmind: 
-#         #     namee.append(content.id)
-#         #     linked_contentt.append(content)
-#         # print('--manager_nhmind--',linked_contentt)
-
-#         # for content in head_manager_nhmind: 
-#         #     names.append(content.id)
-#         #     linked_contents.append(content)
-#         # print('--Head manager_nhmind--',linked_contents)
-#         # return JsonResponse({'dev':'ok'})
 
 class LeaderUndersManager(APIView):
 
@@ -125,6 +54,44 @@ class LeaderUndersManagerFistnameLastname(APIView):
         return JsonResponse(Skill , safe=False)
        
        
+class ModuleStackk(APIView):
 
-     
+    def get(self,request):
+        datalist = {}
+        datalist = request.data
+        employee_id= datalist['employee_id']
+        primary_id_empl= StakeHolder.objects.get(employee_id=employee_id).id
+        moduleleaders_object = ModuleLeaders.objects.filter(stakeholder_id = primary_id_empl)
+        Skill=[]
+        for  i in moduleleaders_object:  
+            skill ={'name':i.module.name,'active':i.module.active,'module_type_id':i.module.module_type_id,"parent_module_id":i.module.parent_module_id}
+            Skill.append(skill)
+        return JsonResponse(Skill , safe=False)
+            
+class Stakeholderlist(APIView):
+    def get(self,request):
+        datalist = {}
+        leader = []
+        datalist = request.data
+        name= datalist['name']
+        # moduleStack
+        modulestackObject = ModuleStack.objects.get(name = name)
+        ModuleLeadersObject = ModuleLeaders.objects.filter(module_id = modulestackObject)
+        # for i in ModuleLeadersObject:
+        #     leader.append(i.stakeholder_id)
+        # moduleleaders_object = ModuleLeaders.objects.filter(stakeholder_id__in = leader)
+        # print('--------------------xxxx---------------------------',leader)
+        leader = []
 
+        Skill=[]
+        for  i in ModuleLeadersObject: 
+            leader.append(i.stakeholder_id)   
+            print('--------------------------------------------------',leader)
+            skill ={'Emp ID':i.stakeholder.employee_id,'Full Name ':i.stakeholder.user.first_name +' '+ i.stakeholder.user.last_name ,'first_name':i.stakeholder.user.first_name,'last name':i.stakeholder.user.last_name}
+            Skill.append(skill)
+        print('--------------------------------------------------',leader)
+        return JsonResponse(Skill , safe=False)
+       
+       
+
+        # return JsonResponse({'dev':'ok'})
